@@ -55,4 +55,16 @@ public class BookService {
         }
     }
 
+    public List<Book> searchBooks(String title, String author) {
+        if (title != null && author != null) {
+            return bookRepository.findByTitleContainingAndAuthorContaining(title, author);
+        } else if (title != null) {
+            return bookRepository.findByTitleContaining(title);
+        } else if (author != null) {
+            return bookRepository.findByAuthorContaining(author);
+        } else {
+            return bookRepository.findAll();
+        }
+    }
+
 }

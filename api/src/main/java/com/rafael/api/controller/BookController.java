@@ -58,4 +58,16 @@ public class BookController {
         }
     }
 
+    @GetMapping("/search")
+    public ResponseEntity<List<Book>> searchBooks(@RequestParam(required = false) String title,
+                                                  @RequestParam(required = false) String author) {
+        List<Book> books = bookService.searchBooks(title, author);
+
+        if (books.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        } else {
+            return ResponseEntity.ok(books);
+        }
+    }
+
 }
