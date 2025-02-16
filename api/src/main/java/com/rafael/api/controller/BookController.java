@@ -41,4 +41,11 @@ public class BookController {
         return ResponseEntity.ok(book);
     }
 
+    @PutMapping("/{id}")
+    public ResponseEntity<Book> updateBook(@PathVariable Long id, @RequestBody Book book) {
+        return bookService.updateBook(id, book)
+                .map(updatedBook -> ResponseEntity.status(HttpStatus.ACCEPTED).body(updatedBook))
+                .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).build());
+    }
+
 }

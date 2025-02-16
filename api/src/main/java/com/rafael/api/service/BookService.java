@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class BookService {
@@ -27,6 +28,22 @@ public class BookService {
 
     public Book getBookById(Long id) {
         return bookRepository.findById(id).orElse(null);
+    }
+
+    public Optional<Book> updateBook(Long id, Book updatedBook) {
+        return bookRepository.findById(id)
+                .map(existingBook -> {
+                    checkAndUpdateNonNullProperties(updatedBook, existingBook);
+                    return bookRepository.save(existingBook);
+                });
+    }
+
+    private void checkAndUpdateNonNullProperties(Book updatedBook, Book existingBook) {
+        if (updatedBook.getTitle() != null) existingBook.setTitle(updatedBook.getTitle());
+        if (updatedBook.getAuthor() != null) existingBook.setAuthor(updatedBook.getAuthor());
+        if (updatedBook.getIsbn() != null) existingBook.setIsbn(updatedBook.getIsbn());
+        if (updatedBook.getPublicationYear() != 0) existingBook.setPublicationYear(updatedBook.getPublicationYear());
+        if (updatedBook.getDescription() != null) existingBook.setDescription(updatedBook.getDescription());
     }
 
 }
