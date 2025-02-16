@@ -1,0 +1,23 @@
+[
+  {
+    "title": "The Great Gatsby",
+    "author": "F. Scott Fitzgerald",
+    "isbn": "9780743273565",
+    "publicationYear": 1925,
+    "description": "A novel set in the 1920s that explores themes of wealth, love, and the American Dream."
+  },
+  {
+    "title": "A Brief History of Time",
+    "author": "Stephen Hawking",
+    "isbn": "9780553380163",
+    "publicationYear": 1988,
+    "description": "A landmark book in science, Stephen Hawking explores the nature of time, black holes, and the origins of the universe."
+  },
+  {
+    "title": "Dracula",
+    "author": "Bram Stoker",
+    "isbn": "9780141439846",
+    "publicationYear": 1897,
+    "description": "The classic gothic novel about Count Dracula’s attempt to move from Transylvania to England so he can spread the undead curse, and the battle between Dracula and those who try to stop him."
+  }
+]
