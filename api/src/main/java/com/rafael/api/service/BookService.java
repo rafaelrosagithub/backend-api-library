@@ -46,4 +46,13 @@ public class BookService {
         if (updatedBook.getDescription() != null) existingBook.setDescription(updatedBook.getDescription());
     }
 
+    public boolean deleteBook(Long id) {
+        if (bookRepository.existsById(id)) {
+            bookRepository.deleteById(id);
+            return true;
+        } else {
+            return false;
+        }
+    }
+
 }
