@@ -1,12 +1,15 @@
 package com.rafael.api.controller;
 
 
+import com.rafael.api.dto.BookInsightAIResponse;
 import com.rafael.api.model.Book;
+import com.rafael.api.service.BookInsightAIService;
 import com.rafael.api.service.BookService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import reactor.core.publisher.Mono;
 
 import java.util.List;
 
@@ -15,10 +18,12 @@ import java.util.List;
 public class BookController {
 
     private final BookService bookService;
+    private final BookInsightAIService bookInsightService;
 
     @Autowired
-    public BookController(BookService bookService) {
+    public BookController(BookService bookService, BookInsightAIService bookInsightService) {
         this.bookService = bookService;
+        this.bookInsightService = bookInsightService;
     }
 
     @PostMapping
@@ -69,5 +74,19 @@ public class BookController {
             return ResponseEntity.ok(books);
         }
     }
+
+
+    @GetMapping("/{id}/ai-insights")
+    public ResponseEntity<Mono<BookInsightAIResponse>> getBookInsights(@PathVariable Long id) {
+        Mono<BookInsightAIResponse> aiResponse = bookInsightService.getBookInsights(id)
+                .onErrorResume(e -> {
+                    return Mono.just(new BookInsightAIResponse(null, "Error generating AI insight: " + e.getMessage()));
+                });
+
+        return ResponseEntity.ok(aiResponse);
+    }
+
+
+
 
 }
