@@ -4,6 +4,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.validation.constraints.*;
 
 @Entity
 public class Book {
@@ -12,15 +13,24 @@ public class Book {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String title; // The title of the book.
+    @NotNull(message = "Title cannot be null")
+    @Size(min = 1, max = 200, message = "Title must be between 1 and 200 characters")
+    private String title;
 
-    private String author; // The author of the book
+    @NotNull(message = "Author cannot be null")
+    @Size(min = 1, max = 100, message = "Author name must be between 1 and 100 characters")
+    private String author;
 
-    private String isbn; // The International Standard Book Number.
+    @NotNull(message = "ISBN cannot be null")
+    @Pattern(regexp = "^[0-9]{13}$", message = "ISBN must be exactly 13 digits")
+    private String isbn;
 
-    private int publicationYear; // The year the book was published.
+    @Min(value = 1700, message = "Publication year must be after 1700")
+    @Max(value = 2025, message = "Publication year cannot be in the future")
+    private int publicationYear;
 
-    private String description; // A brief summary or description of the book (used for AI processing).
+    @Size(max = 1000, message = "Description cannot exceed 1000 characters")
+    private String description;
 
     public Book() {}
 

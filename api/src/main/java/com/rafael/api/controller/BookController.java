@@ -5,6 +5,7 @@ import com.rafael.api.dto.BookInsightAIResponse;
 import com.rafael.api.model.Book;
 import com.rafael.api.service.BookInsightAIService;
 import com.rafael.api.service.BookService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -27,7 +28,7 @@ public class BookController {
     }
 
     @PostMapping
-    public ResponseEntity<Book> createBook(@RequestBody Book book) {
+    public ResponseEntity<Book> createBook(@RequestBody @Valid Book book) {
         Book savedBook = bookService.saveBook(book);
         return ResponseEntity.status(HttpStatus.CREATED).body(savedBook);
     }
@@ -47,7 +48,7 @@ public class BookController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Book> updateBook(@PathVariable Long id, @RequestBody Book book) {
+    public ResponseEntity<Book> updateBook(@PathVariable Long id, @RequestBody @Valid Book book) {
         return bookService.updateBook(id, book)
                 .map(updatedBook -> ResponseEntity.status(HttpStatus.ACCEPTED).body(updatedBook))
                 .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).build());
@@ -75,7 +76,6 @@ public class BookController {
         }
     }
 
-
     @GetMapping("/{id}/ai-insights")
     public ResponseEntity<Mono<BookInsightAIResponse>> getBookInsights(@PathVariable Long id) {
         Mono<BookInsightAIResponse> aiResponse = bookInsightService.getBookInsights(id)
@@ -85,8 +85,4 @@ public class BookController {
 
         return ResponseEntity.ok(aiResponse);
     }
-
-
-
-
 }
