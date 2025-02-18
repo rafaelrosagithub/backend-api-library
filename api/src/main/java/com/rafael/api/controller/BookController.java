@@ -5,6 +5,8 @@ import com.rafael.api.model.Book;
 import com.rafael.api.service.BookInsightAIService;
 import com.rafael.api.service.BookService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -32,7 +34,8 @@ public class BookController {
 
     @PostMapping
     @Operation(summary = "Create a new book")
-    @ApiResponse(responseCode = "201", description = "Book created successfully")
+    @ApiResponse(responseCode = "201", description = "Book created successfully",
+            content = @Content(mediaType = "application/json", schema = @Schema(implementation = Book.class)))
     public ResponseEntity<Book> createBook(@RequestBody @Valid Book book) {
         Book savedBook = bookService.saveBook(book);
         return ResponseEntity.status(HttpStatus.CREATED).body(savedBook);
@@ -40,14 +43,16 @@ public class BookController {
 
     @GetMapping
     @Operation(summary = "Get all books")
-    @ApiResponse(responseCode = "200", description = "Successfully retrieved list of books")
+    @ApiResponse(responseCode = "200", description = "Successfully retrieved list of books",
+            content = @Content(mediaType = "application/json", schema = @Schema(implementation = Book.class)))
     public List<Book> getAllBooks() {
         return bookService.getAllBooks();
     }
 
     @GetMapping("/{id}")
     @Operation(summary = "Get a book by ID")
-    @ApiResponse(responseCode = "200", description = "Successfully retrieved the book")
+    @ApiResponse(responseCode = "200", description = "Successfully retrieved the book",
+            content = @Content(mediaType = "application/json", schema = @Schema(implementation = Book.class)))
     @ApiResponse(responseCode = "404", description = "Book not found")
     public ResponseEntity<Book> getBookById(@PathVariable Long id) {
         Book book = bookService.getBookById(id);
@@ -59,7 +64,8 @@ public class BookController {
 
     @PutMapping("/{id}")
     @Operation(summary = "Update a book")
-    @ApiResponse(responseCode = "202", description = "Successfully updated the book")
+    @ApiResponse(responseCode = "202", description = "Successfully updated the book",
+            content = @Content(mediaType = "application/json", schema = @Schema(implementation = Book.class)))
     @ApiResponse(responseCode = "404", description = "Book not found")
     public ResponseEntity<Book> updateBook(@PathVariable Long id, @RequestBody @Valid Book book) {
         return bookService.updateBook(id, book)
@@ -82,7 +88,8 @@ public class BookController {
 
     @GetMapping("/search")
     @Operation(summary = "Search books by title or author")
-    @ApiResponse(responseCode = "200", description = "Successfully retrieved list of books")
+    @ApiResponse(responseCode = "200", description = "Successfully retrieved list of books",
+            content = @Content(mediaType = "application/json", schema = @Schema(implementation = Book.class)))
     @ApiResponse(responseCode = "404", description = "No books found")
     public ResponseEntity<List<Book>> searchBooks(@RequestParam(required = false) String title,
                                                   @RequestParam(required = false) String author) {
@@ -96,7 +103,8 @@ public class BookController {
 
     @GetMapping("/{id}/ai-insights")
     @Operation(summary = "Get AI insights for a book")
-    @ApiResponse(responseCode = "200", description = "Successfully retrieved AI insights")
+    @ApiResponse(responseCode = "200", description = "Successfully retrieved AI insights",
+            content = @Content(mediaType = "application/json", schema = @Schema(implementation = BookInsightAIResponse.class)))
     @ApiResponse(responseCode = "404", description = "Book not found")
     public ResponseEntity<Mono<BookInsightAIResponse>> getBookInsights(@PathVariable Long id) {
         Mono<BookInsightAIResponse> aiResponse = bookInsightService.getBookInsights(id)
