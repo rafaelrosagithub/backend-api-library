@@ -5,6 +5,9 @@ import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
+import reactor.util.retry.Retry;
+
+import java.time.Duration;
 
 @Component
 public class AIClient {
@@ -36,6 +39,7 @@ public class AIClient {
                 .bodyValue(requestBody)
                 .retrieve()
                 .bodyToMono(String.class)
+                .retryWhen(Retry.fixedDelay(3, Duration.ofSeconds(3)))
                 .onErrorResume(e -> Mono.just("Error generating insight: " + e.getMessage()));
     }
 }
