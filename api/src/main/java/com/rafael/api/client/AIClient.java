@@ -39,7 +39,6 @@ public class AIClient {
                 .bodyValue(requestBody)
                 .retrieve()
                 .bodyToMono(String.class)
-                .retryWhen(Retry.fixedDelay(3, Duration.ofSeconds(3)))
                 .onErrorResume(e -> Mono.just("Error generating insight: " + e.getMessage()));
     }
 }
