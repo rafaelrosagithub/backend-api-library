@@ -4,8 +4,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.rafael.api.service.BookInsightAIService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -37,7 +35,7 @@ import reactor.core.publisher.Mono;
 @SpringBootTest
 @AutoConfigureMockMvc
 @ExtendWith(MockitoExtension.class)
-public class BookControllerIntegrationTest {
+public class BookControllerIntegrationTests {
 
     @Autowired
     private MockMvc mockMvc;
@@ -48,7 +46,7 @@ public class BookControllerIntegrationTest {
     @MockitoBean
     private BookInsightAIService bookInsightService;
 
-    private ObjectMapper objectMapper = new ObjectMapper();
+    private final ObjectMapper objectMapper = new ObjectMapper();
 
     @Test
     public void shouldCreateBookSuccessfully() throws Exception {
@@ -60,11 +58,11 @@ public class BookControllerIntegrationTest {
                 "A guide to testing in Spring Boot"
         );
 
-        String bookJson = objectMapper.writeValueAsString(book);
+        when(bookService.saveBook(any(Book.class))).thenReturn(book);
 
         mockMvc.perform(post("/books")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(bookJson))
+                        .content(objectMapper.writeValueAsString(book)))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.title").value("Spring Boot Testing"))
                 .andExpect(jsonPath("$.author").value("John Doe"))
@@ -86,9 +84,9 @@ public class BookControllerIntegrationTest {
         when(bookService.getBookById(1L)).thenReturn(book);
 
         mockMvc.perform(get("/books/1"))
-                .andExpect(status().isOk())  // Verifica se o status HTTP é 200 OK
-                .andExpect(jsonPath("$.title").value("Clean Code"))  // Verifica se o título é "Clean Code"
-                .andExpect(jsonPath("$.author").value("Robert C. Martin"));  // Verifica se o autor é "Robert C. Martin"
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.title").value("Clean Code"))
+                .andExpect(jsonPath("$.author").value("Robert C. Martin"));
     }
 
 
@@ -121,14 +119,14 @@ public class BookControllerIntegrationTest {
 
     @Test
     void shouldReturn404WhenUpdatingNonexistentBook() throws Exception {
-        when(bookService.updateBook(eq(99L), any(Book.class))).thenReturn(Optional.empty());
-
         Book bookToUpdate = new Book(
                 "Dummy Title",
                 "Dummy Author",
                 "1122334455667",
                 2020,
                 "Dummy description");
+
+        when(bookService.updateBook(eq(99L), any(Book.class))).thenReturn(Optional.empty());
 
         mockMvc.perform(put("/books/1")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -171,6 +169,7 @@ public class BookControllerIntegrationTest {
         List<Book> books = Collections.singletonList(
                 new Book("Spring Boot", "Craig Walls", "1234567890123", 2019, "A book about Spring Boot.")
         );
+
         when(bookService.searchBooks("Spring Boot", null)).thenReturn(books);
 
         mockMvc.perform(get("/books/search?title=Spring Boot"))
