@@ -106,9 +106,9 @@ public class BookController {
     @ApiResponse(responseCode = "200", description = "Successfully retrieved AI insights",
             content = @Content(mediaType = "application/json", schema = @Schema(implementation = BookInsightAIResponse.class)))
     @ApiResponse(responseCode = "404", description = "Book not found")
-    public ResponseEntity<Mono<BookInsightAIResponse>> getBookInsights(@PathVariable Long id) {
-        Mono<BookInsightAIResponse> aiResponse = bookInsightService.getBookInsights(id)
-                .onErrorResume(e -> Mono.just(new BookInsightAIResponse(null, "Error generating AI insight: " + e.getMessage())));
-        return ResponseEntity.ok(aiResponse);
+    public Mono<ResponseEntity<BookInsightAIResponse>> getBookInsights(@PathVariable Long id) {
+        return bookInsightService.getBookInsights(id)
+                .map(ResponseEntity::ok);
     }
+
 }
