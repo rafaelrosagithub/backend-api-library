@@ -1,8 +1,9 @@
 package com.rafael.api.client;
 
-import com.rafael.api.dto.BookInsightAIResponse;
 import com.rafael.api.exception.IntegrationAIException;
 import com.rafael.api.utils.JsonStringToObjectParser;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.MediaType;
@@ -15,6 +16,8 @@ import java.util.Map;
 
 @Component
 public class AIClient {
+
+    private static final Logger logger = LoggerFactory.getLogger(AIClient.class);
 
     private final WebClient webClient;
 
@@ -29,6 +32,8 @@ public class AIClient {
     }
 
     public Mono<String> generateInsight(String prompt) {
+        logger.info("Method: generateInsight, param: {}", prompt);
+
         Map<String, Object> mapRequestBody = Map.of(
                 "model", "gpt-4o-mini",
                 "store", true,
