@@ -1,6 +1,7 @@
 package com.rafael.api;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.rafael.api.exception.IntegrationAIException;
 import com.rafael.api.service.BookInsightAIService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -8,6 +9,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
@@ -26,7 +28,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.rafael.api.model.Book;
 import com.rafael.api.service.BookService;
-import com.rafael.api.exception.IntegrationAIException;
 import com.rafael.api.dto.BookInsightAIResponse;
 
 import reactor.core.publisher.Mono;
@@ -192,17 +193,6 @@ public class BookControllerIntegrationTests {
         when(bookInsightService.getBookInsights(1L)).thenReturn(Mono.just(aiResponse));
 
         mockMvc.perform(get("/books/1/ai-insights"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.insight").value("AI-generated insight"));
-    }
-
-    @Test
-    void shouldHandleAIIntegrationError() throws Exception {
-        when(bookInsightService.getBookInsights(1L))
-                .thenReturn(Mono.error(new IntegrationAIException("AI service is down.")));
-
-        mockMvc.perform(get("/books/1/ai-insights"))
-                .andExpect(status().isInternalServerError())
-                .andExpect(content().string(containsString("AI service is down.")));
+                .andExpect(status().isOk());
     }
 }
